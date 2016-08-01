@@ -1,0 +1,34 @@
+html {
+    font-family: 'Lato', sans-serif;
+    font-size: 100%;
+}
+h1 {
+    font-weight: bold;
+}
+h2 {
+    font-style: italic;
+    font-weight: lighter;
+}
+#page-container {
+    display: block;
+    width: 98%;
+    margin: auto;
+}
+#header-container {
+    text-align: center;
+}
+#header-container h1 {
+    font-size: 2.5rem;
+}
+#header-container h2 {
+    font-size: 1.8rem;
+}
+#content-container h1 {
+    font-size: 1.5rem;
+}
+#content-container h2 {
+    font-size: 1.3rem;
+}
+#content-container {
+    font-size: 1.2rem;
+}
