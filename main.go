@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 )
 
 const appName = "data-management"
@@ -12,6 +13,13 @@ const appName = "data-management"
 type Page struct {
 	Title    string
 	PageName string
+}
+
+type Project struct {
+	Name         string
+	Description  string
+	CreationDate time.Time
+	LastEdit     time.Time
 }
 
 var port = flag.String("port", "8080", "server port")
@@ -39,12 +47,22 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(
 		"templates/main.html",
 		"templates/header.html",
-		"templates/index.html",
-		"templates/footer.html")
+		"templates/index.html")
 	p := Page{Title: appName, PageName: "index"}
+	prjs := make([]Project, 1)
+	tt := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
+	prjs[0] = Project{
+		"test project",
+		"test project description",
+		tt,
+		tt,
+	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = t.Execute(w, p)
+	err = t.Execute(w, map[string]interface{}{
+		"Page":     p,
+		"Projects": prjs,
+	})
 }

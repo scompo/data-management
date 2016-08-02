@@ -9,6 +9,10 @@ h2 {
     font-style: italic;
     font-weight: lighter;
 }
+table{
+  width: 100%;
+  text-align: center;
+}
 #page-container {
     display: block;
     width: 98%;

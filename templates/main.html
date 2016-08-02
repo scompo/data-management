@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{.Title}} - {{.PageName}}</title>
+    <title>{{.Page.Title}} - {{.Page.PageName}}</title>
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
 </head>
@@ -15,9 +15,6 @@
         </div>
         <div id="content-container">
             {{template "content" .}}
-        </div>
-        <div id="footer-container">
-            {{template "footer" .}}
         </div>
     </div>
 </body>
