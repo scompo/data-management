@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/scompo/data-management/domain"
 	"html/template"
 	"log"
 	"net/http"
@@ -15,11 +16,30 @@ type Page struct {
 	PageName string
 }
 
-type Project struct {
-	Name         string
-	Description  string
-	CreationDate time.Time
-	LastEdit     time.Time
+var mockedProjects = createMockedProjects()
+
+func createMockedProjects() []domain.Project {
+	prjs := make([]domain.Project, 3)
+	tt := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
+	prjs[0] = domain.Project{
+		"test project 1",
+		"test project 1 description",
+		tt,
+		tt,
+	}
+	prjs[1] = domain.Project{
+		"test project 2",
+		"test project 2 description",
+		tt,
+		tt,
+	}
+	prjs[2] = domain.Project{
+		"test project 3",
+		"test project 3 description",
+		tt,
+		tt,
+	}
+	return prjs
 }
 
 var port = flag.String("port", "8080", "server port")
@@ -49,20 +69,12 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 		"templates/header.html",
 		"templates/index.html")
 	p := Page{Title: appName, PageName: "index"}
-	prjs := make([]Project, 1)
-	tt := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
-	prjs[0] = Project{
-		"test project",
-		"test project description",
-		tt,
-		tt,
-	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	err = t.Execute(w, map[string]interface{}{
 		"Page":     p,
-		"Projects": prjs,
+		"Projects": mockedProjects,
 	})
 }
