@@ -7,7 +7,23 @@ import (
 )
 
 func TestAdd(t *testing.T) {
-	t.Fatal("to do")
+	require := require.New(t)
+	p := Project{
+		Name:         "test project",
+		Description:  "test project description",
+		CreationDate: time.Now(),
+		LastEdit:     time.Now(),
+	}
+	ps := []Project{p}
+	repo := ProjectsRepository{
+		projects: ps,
+	}
+	repo.Add(ps)
+	actual := repo.projects[0]
+	require.Equal(p.Name, actual.Name)
+	require.Equal(p.Description, actual.Description)
+	require.Equal(p.CreationDate, actual.CreationDate)
+	require.Equal(p.LastEdit, actual.LastEdit)
 }
 
 func TestAll(t *testing.T) {
