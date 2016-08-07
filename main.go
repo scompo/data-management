@@ -52,12 +52,30 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/", mainHandler)
+	http.HandleFunc("/projects", projectsHandler)
 
 	log.Printf("listening on port %v...", *port)
 	err := http.ListenAndServe(":"+*port, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func projectsHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Called projectsHandler")
+	t, err := template.ParseFiles(
+		"templates/main.html",
+		"templates/header.html",
+		"templates/projects.html")
+	p := Page{Title: appName, PageName: "projects"}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = t.Execute(w, map[string]interface{}{
+		"Page":     p,
+		"Projects": createMockedProjects(),
+	})
 }
 
 func mainHandler(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +90,10 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = t.Execute(w, map[string]interface{}{
-		"Page":     p,
-		"Projects": createMockedProjects(),
+		"Page": p,
 	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

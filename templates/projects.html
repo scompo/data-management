@@ -1,0 +1,24 @@
+{{define "content"}}
+<h1>Projects list</h1>
+<h2>Here you can find the list of all created projects</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Created</th>
+            <th>Last edited</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Projects}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Description}}</td>
+            <td>{{.CreationDate}}</td>
+            <td>{{.LastEdit}}</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{end}}
