@@ -16,8 +16,6 @@ type Page struct {
 	PageName string
 }
 
-var projectRepo = domain.ProjectsRepository{}
-
 func createMockedProjects() []domain.Project {
 	prjs := make([]domain.Project, 3)
 	tt := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
@@ -55,8 +53,6 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/", mainHandler)
 
-	projectRepo.Add(createMockedProjects())
-
 	log.Printf("listening on port %v...", *port)
 	err := http.ListenAndServe(":"+*port, nil)
 	if err != nil {
@@ -77,6 +73,6 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	err = t.Execute(w, map[string]interface{}{
 		"Page":     p,
-		"Projects": projectRepo.All(),
+		"Projects": createMockedProjects(),
 	})
 }
