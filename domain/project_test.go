@@ -10,7 +10,7 @@ import (
 
 var testTime time.Time = time.Now()
 
-func TestSave(t *testing.T) {
+func TestEncode(t *testing.T) {
 	require := require.New(t)
 	currentTime = func() time.Time {
 		return testTime
