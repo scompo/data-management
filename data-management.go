@@ -27,14 +27,27 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/", mainHandler)
-	http.HandleFunc("/projects", projectsHandler)
+	http.HandleFunc("/projects/", projectsHandler)
 	http.HandleFunc("/projects/new", newProjectHandler)
+	http.HandleFunc("/projects/delete", deleteProjectHandler)
 
 	log.Printf("listening on port %v...", *port)
 	err := http.ListenAndServe(":"+*port, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func deleteProjectHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Called DeleteProjectHandler")
+	name := r.URL.Query().Get("Name")
+	err := domain.DeleteProject(name)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/projects", http.StatusFound)
+	return
 }
 
 func newProjectHandler(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +64,6 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) {
 			},
 			Description: description,
 		}
-		log.Printf("project %v\n", pi)
 		domain.SaveProject(pi)
 		http.Redirect(w, r, "/projects", http.StatusFound)
 		return
