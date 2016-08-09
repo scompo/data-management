@@ -21,20 +21,14 @@ func createMockedProjects() []domain.Project {
 	tt := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
 	prjs[0] = domain.Project{
 		"test project 1",
-		"test project 1 description",
-		tt,
 		tt,
 	}
 	prjs[1] = domain.Project{
 		"test project 2",
-		"test project 2 description",
-		tt,
 		tt,
 	}
 	prjs[2] = domain.Project{
 		"test project 3",
-		"test project 3 description",
-		tt,
 		tt,
 	}
 	return prjs

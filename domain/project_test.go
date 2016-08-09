@@ -22,13 +22,10 @@ func TestEncode(t *testing.T) {
 		{
 			Project{
 				Name:        "testName",
-				Description: "testDescription",
 			},
 			Project{
 				Name:         "testName",
-				Description:  "testDescription",
 				CreationDate: testTime,
-				LastEdit:     testTime,
 			},
 		},
 	}

@@ -6,8 +6,8 @@ func NewProject(*domain.Project) (error, domain.Project) {
 	return nil, domain.Project{}
 }
 
-func ProjectExists(name string) bool {
-	return false
+func ProjectExists(name string) (error, bool) {
+	return nil, false
 }
 
 func All() []string {
