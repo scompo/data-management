@@ -7,9 +7,10 @@ import (
 	"time"
 )
 
-var projects map[string]Project = make(map[string]Project)
+var projects []Project = make([]Project, 0)
 
 type ProjectInfo struct {
+	Project
 	Description string
 }
 
@@ -22,4 +23,14 @@ func (p *Project) Encode(w io.Writer) {
 	enc := json.NewEncoder(w)
 	enc.Encode(p)
 	return
+}
+
+func SaveProject(p ProjectInfo) error {
+	p.CreationDate = currentTime()
+	projects = append(projects, p.Project)
+	return nil
+}
+
+func AllProjects() []Project {
+	return projects
 }

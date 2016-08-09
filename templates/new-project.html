@@ -1,0 +1,18 @@
+{{define "content"}}
+<h1>Project creation</h1>
+<h2>Create a new project</h2>
+<form action="/projects/new" method="post">
+    <fieldset>
+        <legend>New project data</legend>
+        <label for="nameTxt">Name:</label>
+        <br />
+        <input type="text" name="Name" id="nameTxt"/>
+        <br />
+        <label for="descriptionTxt">Description:</label>
+        <br />
+        <input type="text" name="Description" id="descriptionTxt"/>
+        <br />
+        <input type="submit" value="Create" />
+    </fieldset>
+</form>
+{{end}}
