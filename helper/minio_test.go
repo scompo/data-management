@@ -5,7 +5,17 @@ import (
 	"testing"
 )
 
-func TestSaveProjectWith(t *testing.T) {
+func TestSaveProject(t *testing.T) {
+	require := require.New(t)
+	require.Fail("to do")
+}
+
+func TestProjectExists(t *testing.T) {
+	require := require.New(t)
+	require.Fail("to do")
+}
+
+func TestAll(t *testing.T) {
 	require := require.New(t)
 	require.Fail("to do")
 }
