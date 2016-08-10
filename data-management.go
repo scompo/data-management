@@ -31,12 +31,34 @@ func main() {
 	http.HandleFunc("/projects/new", newProjectHandler)
 	http.HandleFunc("/projects/delete", deleteProjectHandler)
 	http.HandleFunc("/projects/view", viewProjectHandler)
+	http.HandleFunc("/pages/new", pageNewHandler)
 
 	log.Printf("listening on port %v...", *port)
 	err := http.ListenAndServe(":"+*port, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func pageNewHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Called pageNewHandler")
+	t, err := template.ParseFiles(
+		"templates/main.html",
+		"templates/header.html",
+		"templates/page-new.html")
+	p := Page{Title: appName, PageName: "New Page"}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = t.Execute(w, map[string]interface{}{
+		"Page": p,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	return
 }
 
 func viewProjectHandler(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +68,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) {
 		"templates/main.html",
 		"templates/header.html",
 		"templates/project-view.html")
-	p := Page{Title: appName, PageName: "projects"}
+	p := Page{Title: appName, PageName: "View Project"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -98,7 +120,7 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) {
 			"templates/main.html",
 			"templates/header.html",
 			"templates/project-new.html")
-		p := Page{Title: appName, PageName: "projects"}
+		p := Page{Title: appName, PageName: "New Project"}
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -118,7 +140,7 @@ func projectsHandler(w http.ResponseWriter, r *http.Request) {
 		"templates/main.html",
 		"templates/header.html",
 		"templates/project-all.html")
-	p := Page{Title: appName, PageName: "projects"}
+	p := Page{Title: appName, PageName: "All Projects"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -135,7 +157,7 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 		"templates/main.html",
 		"templates/header.html",
 		"templates/index.html")
-	p := Page{Title: appName, PageName: "index"}
+	p := Page{Title: appName, PageName: "Main Page"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -13,6 +13,16 @@ table {
     width: 100%;
     text-align: center;
 }
+.text-full-width {
+    border-right-width: inherit;
+    border-bottom-width: inherit;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    width: 100%;
+}
+#edit-page-text-area {
+    width: 100%;
+}
 #page-container {
     display: block;
     width: 98%;

@@ -1,0 +1,15 @@
+{{define "content"}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<fieldset>
+    <legend>Page Info</legend>
+    <input type="text" name="Name" id="input-page-name" placeholder="new-page" class="text-full-width" />
+    <br />
+    <input type="button" name="save" value="Save Page" class="text-full-width">
+</fieldset>
+<fieldset>
+    <legend>Page Content</legend>
+    <textarea id="edit-page-text-area"></textarea>
+</fieldset>
+<script src="/static/js/page-new.js"></script>
+{{end}}
