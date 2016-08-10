@@ -9,14 +9,14 @@ import (
 	"time"
 )
 
-var projects []Project = make([]Project, 0)
+var projects map[string]ProjectInfo = make(map[string]ProjectInfo)
 
 type ProjectInfo struct {
 	Project
 	Description string
 }
 
-type ByCreationDate []Project
+type ByCreationDate []ProjectInfo
 
 func (p ByCreationDate) Len() int {
 	return len(p)
@@ -44,22 +44,35 @@ func (p *Project) Encode(w io.Writer) {
 // Saves a ProjectInfo
 func SaveProject(p ProjectInfo) error {
 	p.CreationDate = currentTime()
-	projects = append(projects, p.Project)
-	sort.Sort(ByCreationDate(projects))
+	projects[p.Name] = p
 	return nil
 }
 
 // Deletes a project by name
 func DeleteProject(name string) error {
-	for i, p := range projects {
-		if p.Name == name {
-			projects = append(projects[:i], projects[i+1:]...)
-			return nil
-		}
+	if _, present := projects[name]; present {
+		delete(projects, name)
+	} else {
+		return errors.New("not found: " + name)
 	}
-	return errors.New("not found: " + name)
+	return nil
 }
 
-func AllProjects() []Project {
-	return projects
+func AllProjects() []ProjectInfo {
+	ps := make([]ProjectInfo, len(projects), len(projects))
+	i := 0
+	for _, v := range projects {
+		ps[i] = v
+		i++
+	}
+	sort.Sort(ByCreationDate(ps))
+	return ps
+}
+
+func GetProject(name string) (error, ProjectInfo) {
+	if v, present := projects[name]; present {
+		return nil, v
+	} else {
+		return errors.New("not found: " + name), ProjectInfo{}
+	}
 }

@@ -13,7 +13,8 @@
     <tbody>
         {{range .Projects}}
         <tr>
-            <td>{{.Name}}</td>
+            <td>
+                <a href="/projects/view?Name={{.Name}}">{{.Name}}</a></td>
             <td>{{.CreationDate.Format "02/01/2006 - 15:04:05" }}</td>
             <td>
                 <a href="/projects/delete?Name={{.Name}}">x</a>

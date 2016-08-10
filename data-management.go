@@ -30,12 +30,37 @@ func main() {
 	http.HandleFunc("/projects/", projectsHandler)
 	http.HandleFunc("/projects/new", newProjectHandler)
 	http.HandleFunc("/projects/delete", deleteProjectHandler)
+	http.HandleFunc("/projects/view", viewProjectHandler)
 
 	log.Printf("listening on port %v...", *port)
 	err := http.ListenAndServe(":"+*port, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func viewProjectHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Called viewProjectHandler")
+	name := r.URL.Query().Get("Name")
+	t, err := template.ParseFiles(
+		"templates/main.html",
+		"templates/header.html",
+		"templates/project-view.html")
+	p := Page{Title: appName, PageName: "projects"}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err, prj := domain.GetProject(name)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = t.Execute(w, map[string]interface{}{
+		"Page":        p,
+		"ProjectInfo": prj,
+	})
+	return
 }
 
 func deleteProjectHandler(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +97,7 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) {
 		t, err := template.ParseFiles(
 			"templates/main.html",
 			"templates/header.html",
-			"templates/new-project.html")
+			"templates/project-new.html")
 		p := Page{Title: appName, PageName: "projects"}
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -92,7 +117,7 @@ func projectsHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(
 		"templates/main.html",
 		"templates/header.html",
-		"templates/projects.html")
+		"templates/project-all.html")
 	p := Page{Title: appName, PageName: "projects"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
