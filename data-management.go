@@ -10,7 +10,7 @@ import (
 
 const appName = "data-management"
 
-type Page struct {
+type WebPage struct {
 	Title    string
 	PageName string
 }
@@ -46,13 +46,13 @@ func pageNewHandler(w http.ResponseWriter, r *http.Request) {
 		"templates/main.html",
 		"templates/header.html",
 		"templates/page-new.html")
-	p := Page{Title: appName, PageName: "New Page"}
+	p := WebPage{Title: appName, PageName: "New Page"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	err = t.Execute(w, map[string]interface{}{
-		"Page": p,
+		"WebPage": p,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -68,7 +68,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) {
 		"templates/main.html",
 		"templates/header.html",
 		"templates/project-view.html")
-	p := Page{Title: appName, PageName: "View Project"}
+	p := WebPage{Title: appName, PageName: "View Project"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -79,7 +79,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = t.Execute(w, map[string]interface{}{
-		"Page":        p,
+		"WebPage":        p,
 		"ProjectInfo": prj,
 	})
 	return
@@ -120,13 +120,13 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) {
 			"templates/main.html",
 			"templates/header.html",
 			"templates/project-new.html")
-		p := Page{Title: appName, PageName: "New Project"}
+		p := WebPage{Title: appName, PageName: "New Project"}
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		err = t.Execute(w, map[string]interface{}{
-			"Page": p,
+			"WebPage": p,
 		})
 		return
 	default:
@@ -140,13 +140,13 @@ func projectsHandler(w http.ResponseWriter, r *http.Request) {
 		"templates/main.html",
 		"templates/header.html",
 		"templates/project-all.html")
-	p := Page{Title: appName, PageName: "All Projects"}
+	p := WebPage{Title: appName, PageName: "All Projects"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	err = t.Execute(w, map[string]interface{}{
-		"Page":     p,
+		"WebPage":     p,
 		"Projects": domain.AllProjects(),
 	})
 }
@@ -157,13 +157,13 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 		"templates/main.html",
 		"templates/header.html",
 		"templates/index.html")
-	p := Page{Title: appName, PageName: "Main Page"}
+	p := WebPage{Title: appName, PageName: "Main Page"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	err = t.Execute(w, map[string]interface{}{
-		"Page": p,
+		"WebPage": p,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
