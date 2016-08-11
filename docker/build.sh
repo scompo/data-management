@@ -1,14 +1,16 @@
 #!/bin/bash
 echo exporting variables...
-export PRJ_NAME=github.com/scompo/data-management
-export PRJ_PATH=$GOPATH/src/$PRJ_NAME
+export PRJ_NAME=data-management
+export PRJ_FULL_PATH=github.com/scompo/$PRJ_NAME
+export GO_PRJ_PATH=$GOPATH/src/$PRJ_FULL_PATH
 echo exported variables:
 echo project name: $PRJ_NAME
-echo go project path: $PRJ_PATH
-echo getting project $PRJ_NAME...
-go get -d $PRJ_NAME
-echo changing to $PRJ_PATH...
-cd $PRJ_PATH
+echo project full path: $PRJ_FULL_PATH
+echo go project path: $GO_PRJ_PATH
+echo getting project $PRJ_FULL_PATH...
+go get -d $PRJ_FULL_PATH
+echo changing to $PRJ_FULL_PATH...
+cd $GO_PRJ_PATH
 echo git current revision:
 git rev-parse master
 echo downloading dependencies...
