@@ -74,14 +74,14 @@ func (p *Project) Encode(w io.Writer) {
 }
 
 // Saves a ProjectInfo
-func SaveProject(p ProjectInfo) error {
+func Save(p ProjectInfo) error {
 	p.CreationDate = currentTime()
 	prjs[p.Name] = p
 	return nil
 }
 
 // Deletes a project by name
-func DeleteProject(name string) error {
+func Delete(name string) error {
 	if _, present := prjs[name]; present {
 		delete(prjs, name)
 	} else {
@@ -90,7 +90,7 @@ func DeleteProject(name string) error {
 	return nil
 }
 
-func AllProjects() []ProjectInfo {
+func All() []ProjectInfo {
 	ps := make([]ProjectInfo, len(prjs), len(prjs))
 	i := 0
 	for _, v := range prjs {
@@ -101,7 +101,7 @@ func AllProjects() []ProjectInfo {
 	return ps
 }
 
-func GetProject(name string) (error, ProjectInfo) {
+func Get(name string) (error, ProjectInfo) {
 	if v, present := prjs[name]; present {
 		return nil, v
 	} else {

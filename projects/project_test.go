@@ -51,7 +51,7 @@ func TestEncode(t *testing.T) {
 	}{
 		{
 			Project{
-				Name:        "testName",
+				Name: "testName",
 			},
 			Project{
 				Name:         "testName",

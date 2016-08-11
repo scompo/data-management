@@ -99,7 +99,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	err, prj := projects.GetProject(name)
+	err, prj := projects.Get(name)
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
 func deleteProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called DeleteProjectHandler")
 	name := r.URL.Query().Get("Name")
-	err := projects.DeleteProject(name)
+	err := projects.Delete(name)
 	if err != nil {
 		return err
 	}
@@ -140,7 +140,7 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 			},
 			Description: description,
 		}
-		projects.SaveProject(pi)
+		projects.Save(pi)
 		http.Redirect(w, r, "/projects", http.StatusFound)
 		return nil
 	case "GET":
@@ -178,7 +178,7 @@ func projectsHandler(w http.ResponseWriter, r *http.Request) error {
 			Title:    appName,
 			PageName: "All Projects",
 		},
-		"Projects": projects.AllProjects(),
+		"Projects": projects.All(),
 	})
 }
 
