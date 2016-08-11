@@ -33,7 +33,6 @@ package domain
 import (
 	"encoding/json"
 	"errors"
-	"github.com/minio/minio-go"
 	"io"
 	"sort"
 	"time"
@@ -60,7 +59,10 @@ func (p ByCreationDate) Less(i, j int) bool {
 	return p[i].CreationDate.Before(p[j].CreationDate)
 }
 
-type Project minio.BucketInfo
+type Project struct {
+	Name         string
+	CreationDate time.Time
+}
 
 var currentTime = time.Now
 
