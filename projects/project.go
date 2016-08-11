@@ -62,11 +62,10 @@ type Project struct {
 
 var currentTime = time.Now
 
-func (p *Project) Encode(w io.Writer) {
-	p.CreationDate = currentTime()
+// Encodes the project to json
+func encode(w io.Writer, p Project) error {
 	enc := json.NewEncoder(w)
-	enc.Encode(p)
-	return
+	return enc.Encode(p)
 }
 
 // Saves a Project

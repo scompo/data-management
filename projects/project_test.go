@@ -51,17 +51,20 @@ func TestEncode(t *testing.T) {
 	}{
 		{
 			Project{
-				Name: "testName",
+				Name:         "testName",
+				Description:  "test description",
+				CreationDate: testTime,
 			},
 			Project{
 				Name:         "testName",
+				Description:  "test description",
 				CreationDate: testTime,
 			},
 		},
 	}
 	for _, test := range testData {
 		var buf bytes.Buffer
-		test.value.Encode(&buf)
+		encode(&buf, test.value)
 		expData, err := json.Marshal(test.expected)
 		if err != nil {
 			t.Errorf("%v", err)
