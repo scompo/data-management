@@ -45,7 +45,7 @@ func pageNewHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(
 		"templates/main.html",
 		"templates/header.html",
-		"templates/page-new.html")
+		"templates/pages/new.html")
 	p := WebPage{Title: appName, PageName: "New Page"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
