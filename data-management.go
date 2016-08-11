@@ -67,7 +67,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(
 		"templates/main.html",
 		"templates/header.html",
-		"templates/project-view.html")
+		"templates/projects/view.html")
 	p := WebPage{Title: appName, PageName: "View Project"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -119,7 +119,7 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) {
 		t, err := template.ParseFiles(
 			"templates/main.html",
 			"templates/header.html",
-			"templates/project-new.html")
+			"templates/projects/new.html")
 		p := WebPage{Title: appName, PageName: "New Project"}
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -139,7 +139,7 @@ func projectsHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(
 		"templates/main.html",
 		"templates/header.html",
-		"templates/project-all.html")
+		"templates/projects/list.html")
 	p := WebPage{Title: appName, PageName: "All Projects"}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
