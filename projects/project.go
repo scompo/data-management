@@ -38,14 +38,9 @@ import (
 	"time"
 )
 
-var prjs map[string]ProjectInfo = make(map[string]ProjectInfo)
+var prjs map[string]Project = make(map[string]Project)
 
-type ProjectInfo struct {
-	Project
-	Description string
-}
-
-type ByCreationDate []ProjectInfo
+type ByCreationDate []Project
 
 func (p ByCreationDate) Len() int {
 	return len(p)
@@ -62,6 +57,7 @@ func (p ByCreationDate) Less(i, j int) bool {
 type Project struct {
 	Name         string
 	CreationDate time.Time
+	Description  string
 }
 
 var currentTime = time.Now
@@ -73,8 +69,8 @@ func (p *Project) Encode(w io.Writer) {
 	return
 }
 
-// Saves a ProjectInfo
-func Save(p ProjectInfo) error {
+// Saves a Project
+func Save(p Project) error {
 	p.CreationDate = currentTime()
 	prjs[p.Name] = p
 	return nil
@@ -90,8 +86,8 @@ func Delete(name string) error {
 	return nil
 }
 
-func All() []ProjectInfo {
-	ps := make([]ProjectInfo, len(prjs), len(prjs))
+func All() []Project {
+	ps := make([]Project, len(prjs), len(prjs))
 	i := 0
 	for _, v := range prjs {
 		ps[i] = v
@@ -101,10 +97,10 @@ func All() []ProjectInfo {
 	return ps
 }
 
-func Get(name string) (error, ProjectInfo) {
+func Get(name string) (error, Project) {
 	if v, present := prjs[name]; present {
 		return nil, v
 	} else {
-		return errors.New("not found: " + name), ProjectInfo{}
+		return errors.New("not found: " + name), Project{}
 	}
 }

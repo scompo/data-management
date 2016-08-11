@@ -108,7 +108,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
 			Title:    appName,
 			PageName: "View Project",
 		},
-		"ProjectInfo": prj,
+		"Project": prj,
 	})
 }
 
@@ -134,13 +134,10 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 		}
 		name := r.FormValue("Name")
 		description := r.FormValue("Description")
-		pi := projects.ProjectInfo{
-			Project: projects.Project{
-				Name: name,
-			},
+		projects.Save(projects.Project{
+			Name:        name,
 			Description: description,
-		}
-		projects.Save(pi)
+		})
 		http.Redirect(w, r, "/projects", http.StatusFound)
 		return nil
 	case "GET":
