@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"github.com/scompo/data-management/domain"
 	"html/template"
@@ -17,6 +18,15 @@ type WebPage struct {
 
 var port = flag.String("port", "8080", "server port")
 
+type appHandler func(http.ResponseWriter, *http.Request) error
+
+func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if err := fn(w, r); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func main() {
 
 	flag.Parse()
@@ -26,12 +36,12 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
-	http.HandleFunc("/", mainHandler)
-	http.HandleFunc("/projects/", projectsHandler)
-	http.HandleFunc("/projects/new", newProjectHandler)
-	http.HandleFunc("/projects/delete", deleteProjectHandler)
-	http.HandleFunc("/projects/view", viewProjectHandler)
-	http.HandleFunc("/pages/new", pageNewHandler)
+	http.Handle("/", appHandler(mainHandler))
+	http.Handle("/projects/", appHandler(projectsHandler))
+	http.Handle("/projects/new", appHandler(newProjectHandler))
+	http.Handle("/projects/delete", appHandler(deleteProjectHandler))
+	http.Handle("/projects/view", appHandler(viewProjectHandler))
+	http.Handle("/pages/new", appHandler(pageNewHandler))
 
 	log.Printf("listening on port %v...", *port)
 	err := http.ListenAndServe(":"+*port, nil)
@@ -40,69 +50,66 @@ func main() {
 	}
 }
 
-func pageNewHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Called pageNewHandler")
+func pageNewHandler(w http.ResponseWriter, r *http.Request) error {
+	log.Printf("Called viewProjectHandler")
 	t, err := template.ParseFiles(
 		"templates/main.html",
 		"templates/header.html",
 		"templates/pages/new.html")
-	p := WebPage{Title: appName, PageName: "New Page"}
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
-	err = t.Execute(w, map[string]interface{}{
-		"WebPage": p,
+	return t.Execute(w, map[string]interface{}{
+		"WebPage": WebPage{
+			Title:    appName,
+			PageName: "New Page",
+		},
 	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	return
 }
 
-func viewProjectHandler(w http.ResponseWriter, r *http.Request) {
+func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called viewProjectHandler")
 	name := r.URL.Query().Get("Name")
 	t, err := template.ParseFiles(
 		"templates/main.html",
 		"templates/header.html",
 		"templates/projects/view.html")
-	p := WebPage{Title: appName, PageName: "View Project"}
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
 	err, prj := domain.GetProject(name)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
-	err = t.Execute(w, map[string]interface{}{
-		"WebPage":        p,
+	return t.Execute(w, map[string]interface{}{
+		"WebPage": WebPage{
+			Title:    appName,
+			PageName: "View Project",
+		},
 		"ProjectInfo": prj,
 	})
-	return
 }
 
-func deleteProjectHandler(w http.ResponseWriter, r *http.Request) {
+func deleteProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called DeleteProjectHandler")
 	name := r.URL.Query().Get("Name")
 	err := domain.DeleteProject(name)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
 	http.Redirect(w, r, "/projects", http.StatusFound)
-	return
+	return nil
 }
 
-func newProjectHandler(w http.ResponseWriter, r *http.Request) {
+func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called newProjectHandler")
 	switch r.Method {
 	case "POST":
 		log.Printf("method: POST\n")
-		r.ParseForm()
+		err := r.ParseForm()
+		if err != nil {
+			return err
+		}
 		name := r.FormValue("Name")
 		description := r.FormValue("Description")
 		pi := domain.ProjectInfo{
@@ -113,60 +120,59 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		domain.SaveProject(pi)
 		http.Redirect(w, r, "/projects", http.StatusFound)
-		return
+		return nil
 	case "GET":
 		log.Printf("method: GET\n")
 		t, err := template.ParseFiles(
 			"templates/main.html",
 			"templates/header.html",
 			"templates/projects/new.html")
-		p := WebPage{Title: appName, PageName: "New Project"}
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return err
 		}
-		err = t.Execute(w, map[string]interface{}{
-			"WebPage": p,
+		return t.Execute(w, map[string]interface{}{
+			"WebPage": WebPage{
+				Title:    appName,
+				PageName: "New Project",
+			},
 		})
-		return
 	default:
 		log.Printf("DEFAULT\n")
+		return errors.New("method not supported, " + r.Method)
 	}
 }
 
-func projectsHandler(w http.ResponseWriter, r *http.Request) {
+func projectsHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called projectsHandler")
 	t, err := template.ParseFiles(
 		"templates/main.html",
 		"templates/header.html",
 		"templates/projects/list.html")
-	p := WebPage{Title: appName, PageName: "All Projects"}
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
-	err = t.Execute(w, map[string]interface{}{
-		"WebPage":     p,
+	return t.Execute(w, map[string]interface{}{
+		"WebPage": WebPage{
+			Title:    appName,
+			PageName: "All Projects",
+		},
 		"Projects": domain.AllProjects(),
 	})
 }
 
-func mainHandler(w http.ResponseWriter, r *http.Request) {
+func mainHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called mainHandler")
 	t, err := template.ParseFiles(
 		"templates/main.html",
 		"templates/header.html",
 		"templates/index.html")
-	p := WebPage{Title: appName, PageName: "Main Page"}
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
-	err = t.Execute(w, map[string]interface{}{
-		"WebPage": p,
+	return t.Execute(w, map[string]interface{}{
+		"WebPage": WebPage{
+			Title:    appName,
+			PageName: "Main Page",
+		},
 	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 }
