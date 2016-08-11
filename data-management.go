@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"github.com/scompo/data-management/domain"
+	"github.com/scompo/data-management/utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -18,15 +19,6 @@ type WebPage struct {
 
 var port = flag.String("port", "8080", "server port")
 
-type appHandler func(http.ResponseWriter, *http.Request) error
-
-func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if err := fn(w, r); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
 func main() {
 
 	flag.Parse()
@@ -36,12 +28,12 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
-	http.Handle("/", appHandler(mainHandler))
-	http.Handle("/projects/", appHandler(projectsHandler))
-	http.Handle("/projects/new", appHandler(newProjectHandler))
-	http.Handle("/projects/delete", appHandler(deleteProjectHandler))
-	http.Handle("/projects/view", appHandler(viewProjectHandler))
-	http.Handle("/pages/new", appHandler(pageNewHandler))
+	http.Handle("/", utils.AppHandler(mainHandler))
+	http.Handle("/projects/", utils.AppHandler(projectsHandler))
+	http.Handle("/projects/new", utils.AppHandler(newProjectHandler))
+	http.Handle("/projects/delete", utils.AppHandler(deleteProjectHandler))
+	http.Handle("/projects/view", utils.AppHandler(viewProjectHandler))
+	http.Handle("/pages/new", utils.AppHandler(pageNewHandler))
 
 	log.Printf("listening on port %v...", *port)
 	err := http.ListenAndServe(":"+*port, nil)
