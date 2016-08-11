@@ -33,7 +33,7 @@ package main
 import (
 	"errors"
 	"flag"
-	"github.com/scompo/data-management/domain"
+	"github.com/scompo/data-management/projects"
 	"github.com/scompo/data-management/utils"
 	"html/template"
 	"log"
@@ -99,7 +99,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	err, prj := domain.GetProject(name)
+	err, prj := projects.GetProject(name)
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
 func deleteProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called DeleteProjectHandler")
 	name := r.URL.Query().Get("Name")
-	err := domain.DeleteProject(name)
+	err := projects.DeleteProject(name)
 	if err != nil {
 		return err
 	}
@@ -134,13 +134,13 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 		}
 		name := r.FormValue("Name")
 		description := r.FormValue("Description")
-		pi := domain.ProjectInfo{
-			Project: domain.Project{
+		pi := projects.ProjectInfo{
+			Project: projects.Project{
 				Name: name,
 			},
 			Description: description,
 		}
-		domain.SaveProject(pi)
+		projects.SaveProject(pi)
 		http.Redirect(w, r, "/projects", http.StatusFound)
 		return nil
 	case "GET":
@@ -178,7 +178,7 @@ func projectsHandler(w http.ResponseWriter, r *http.Request) error {
 			Title:    appName,
 			PageName: "All Projects",
 		},
-		"Projects": domain.AllProjects(),
+		"Projects": projects.AllProjects(),
 	})
 }
 

@@ -28,7 +28,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package domain
+package projects
 
 import (
 	"encoding/json"
@@ -38,7 +38,7 @@ import (
 	"time"
 )
 
-var projects map[string]ProjectInfo = make(map[string]ProjectInfo)
+var prjs map[string]ProjectInfo = make(map[string]ProjectInfo)
 
 type ProjectInfo struct {
 	Project
@@ -76,14 +76,14 @@ func (p *Project) Encode(w io.Writer) {
 // Saves a ProjectInfo
 func SaveProject(p ProjectInfo) error {
 	p.CreationDate = currentTime()
-	projects[p.Name] = p
+	prjs[p.Name] = p
 	return nil
 }
 
 // Deletes a project by name
 func DeleteProject(name string) error {
-	if _, present := projects[name]; present {
-		delete(projects, name)
+	if _, present := prjs[name]; present {
+		delete(prjs, name)
 	} else {
 		return errors.New("not found: " + name)
 	}
@@ -91,9 +91,9 @@ func DeleteProject(name string) error {
 }
 
 func AllProjects() []ProjectInfo {
-	ps := make([]ProjectInfo, len(projects), len(projects))
+	ps := make([]ProjectInfo, len(prjs), len(prjs))
 	i := 0
-	for _, v := range projects {
+	for _, v := range prjs {
 		ps[i] = v
 		i++
 	}
@@ -102,7 +102,7 @@ func AllProjects() []ProjectInfo {
 }
 
 func GetProject(name string) (error, ProjectInfo) {
-	if v, present := projects[name]; present {
+	if v, present := prjs[name]; present {
 		return nil, v
 	} else {
 		return errors.New("not found: " + name), ProjectInfo{}
