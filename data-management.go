@@ -73,7 +73,6 @@ func main() {
 }
 
 func pageNewHandler(w http.ResponseWriter, r *http.Request) error {
-	log.Printf("Called viewProjectHandler")
 	t, err := prepareAppTemplate("templates/pages/new.html")
 	if err != nil {
 		return err
@@ -87,7 +86,6 @@ func pageNewHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
-	log.Printf("Called viewProjectHandler")
 	name := r.URL.Query().Get("Name")
 	t, err := prepareAppTemplate("templates/projects/view.html")
 	if err != nil {
@@ -107,7 +105,6 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func deleteProjectHandler(w http.ResponseWriter, r *http.Request) error {
-	log.Printf("Called DeleteProjectHandler")
 	name := r.URL.Query().Get("Name")
 	err := projects.Delete(name)
 	if err != nil {
@@ -118,7 +115,6 @@ func deleteProjectHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
-	log.Printf("Called newProjectHandler")
 	switch r.Method {
 	case "POST":
 		log.Printf("method: POST\n")
@@ -153,7 +149,6 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func projectsHandler(w http.ResponseWriter, r *http.Request) error {
-	log.Printf("Called projectsHandler")
 	t, err := prepareAppTemplate("templates/projects/list.html")
 	if err != nil {
 		return err
@@ -168,7 +163,6 @@ func projectsHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func mainHandler(w http.ResponseWriter, r *http.Request) error {
-	log.Printf("Called mainHandler")
 	t, err := prepareAppTemplate("templates/index.html")
 	if err != nil {
 		return err
