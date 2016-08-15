@@ -81,11 +81,10 @@ func Save(p Project) error {
 // Delete deletes a project by name.
 // Returns an error if the project has not been found.
 func Delete(name string) error {
-	if _, present := prjs[name]; present {
-		delete(prjs, name)
-	} else {
+	if !Exists(name) {
 		return errors.New("not found: " + name)
 	}
+	delete(prjs, name)
 	return nil
 }
 
@@ -104,9 +103,15 @@ func All() []Project {
 // Get returns a project by name.
 // returns an error if the project has not been found.
 func Get(name string) (Project, error) {
-	v, present := prjs[name]
-	if !present {
+	if !Exists(name) {
 		return Project{}, errors.New("not found: " + name)
 	}
+	v, _ := prjs[name]
 	return v, nil
+}
+
+// Exists checks if a project exists.
+func Exists(name string) bool {
+	_, present := prjs[name]
+	return present
 }

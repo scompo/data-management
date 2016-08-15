@@ -73,3 +73,20 @@ func TestEncode(t *testing.T) {
 	}
 	currentTime = time.Now
 }
+
+func TestExists(t *testing.T) {
+	p := Project{
+		Name:         "testName",
+		Description:  "test description",
+		CreationDate: testTime,
+	}
+	Save(p)
+	res := Exists(p.Name)
+	if !res {
+		t.Errorf("should return %v but returned %v\n", true, res)
+	}
+	res = Exists("not existent")
+	if res {
+		t.Errorf("should return %v but returned %v\n", false, res)
+	}
+}
