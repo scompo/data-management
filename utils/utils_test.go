@@ -38,6 +38,7 @@ import (
 	"testing"
 )
 
+// http handler that always fails.
 func failFunction(w http.ResponseWriter, r *http.Request) error {
 	return errors.New("fail")
 }

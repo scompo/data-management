@@ -28,12 +28,16 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// Utilities for the application
 package utils
 
 import "net/http"
 
+// Type to support error handling.
 type AppHandler func(http.ResponseWriter, *http.Request) error
 
+// Helper function to handle errors on an http handler function.
+// If fn returns an error an http 500 page it's returned with the details of what happened.
 func (fn AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := fn(w, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
