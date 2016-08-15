@@ -99,10 +99,10 @@ func All() []Project {
 }
 
 // Returns a project by name, an error if the project has not been found.
-func Get(name string) (error, Project) {
+func Get(name string) (Project, error) {
 	if v, present := prjs[name]; present {
-		return nil, v
+		return v, nil
 	} else {
-		return errors.New("not found: " + name), Project{}
+		return Project{}, errors.New("not found: " + name)
 	}
 }
