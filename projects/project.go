@@ -70,14 +70,16 @@ func encode(w io.Writer, p Project) error {
 	return enc.Encode(p)
 }
 
-// Saves a Project, returns an error if something has gone wrong.
+// Save saves a Project.
+// Returns an error if something has gone wrong.
 func Save(p Project) error {
 	p.CreationDate = currentTime()
 	prjs[p.Name] = p
 	return nil
 }
 
-// Deletes a project by name, returns an error if the project has not been found.
+// Delete deletes a project by name.
+// Returns an error if the project has not been found.
 func Delete(name string) error {
 	if _, present := prjs[name]; present {
 		delete(prjs, name)
@@ -87,7 +89,7 @@ func Delete(name string) error {
 	return nil
 }
 
-// Returns all the projects sorted by creation date.
+// All returns all the projects sorted by creation date.
 func All() []Project {
 	ps := make([]Project, len(prjs), len(prjs))
 	i := 0
@@ -99,7 +101,8 @@ func All() []Project {
 	return ps
 }
 
-// Returns a project by name, an error if the project has not been found.
+// Get returns a project by name.
+// returns an error if the project has not been found.
 func Get(name string) (Project, error) {
 	if v, present := prjs[name]; present {
 		return v, nil

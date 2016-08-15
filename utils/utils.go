@@ -33,11 +33,11 @@ package utils
 
 import "net/http"
 
-// Type to support error handling.
+// AppHandler is a function that handes http request but can return an error.
 type AppHandler func(http.ResponseWriter, *http.Request) error
 
-// Helper function to handle errors on an http handler function.
-// If fn returns an error an http 500 page it's returned with the details of what happened.
+// ServeHTTP implementation used to handle errors from the application.
+// if the fn returns an error an HTTP 500 is returned with the details of what's gone wrong.
 func (fn AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := fn(w, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
