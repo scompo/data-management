@@ -38,7 +38,7 @@ import (
 	"time"
 )
 
-var testTime time.Time = time.Now()
+var testTime = time.Now()
 
 func TestEncode(t *testing.T) {
 	require := require.New(t)

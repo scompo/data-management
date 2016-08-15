@@ -99,7 +99,7 @@ func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	err, prj := projects.Get(name)
+	prj, err := projects.Get(name)
 	if err != nil {
 		return err
 	}
