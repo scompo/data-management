@@ -54,6 +54,7 @@ func (p ByCreationDate) Less(i, j int) bool {
 	return p[i].CreationDate.Before(p[j].CreationDate)
 }
 
+// Project type definition
 type Project struct {
 	Name         string
 	CreationDate time.Time
@@ -68,14 +69,14 @@ func encode(w io.Writer, p Project) error {
 	return enc.Encode(p)
 }
 
-// Saves a Project
+// Saves a Project, returns an error if something has gone wrong.
 func Save(p Project) error {
 	p.CreationDate = currentTime()
 	prjs[p.Name] = p
 	return nil
 }
 
-// Deletes a project by name
+// Deletes a project by name, returns an error if the project has not been found.
 func Delete(name string) error {
 	if _, present := prjs[name]; present {
 		delete(prjs, name)
@@ -85,6 +86,7 @@ func Delete(name string) error {
 	return nil
 }
 
+// Returns all the projects sorted by creation date.
 func All() []Project {
 	ps := make([]Project, len(prjs), len(prjs))
 	i := 0
@@ -96,6 +98,7 @@ func All() []Project {
 	return ps
 }
 
+// Returns a project by name, an error if the project has not been found.
 func Get(name string) (error, Project) {
 	if v, present := prjs[name]; present {
 		return nil, v
