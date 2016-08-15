@@ -74,10 +74,7 @@ func main() {
 
 func pageNewHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called viewProjectHandler")
-	t, err := template.ParseFiles(
-		"templates/main.html",
-		"templates/header.html",
-		"templates/pages/new.html")
+	t, err := prepareAppTemplate("templates/pages/new.html")
 	if err != nil {
 		return err
 	}
@@ -92,10 +89,7 @@ func pageNewHandler(w http.ResponseWriter, r *http.Request) error {
 func viewProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called viewProjectHandler")
 	name := r.URL.Query().Get("Name")
-	t, err := template.ParseFiles(
-		"templates/main.html",
-		"templates/header.html",
-		"templates/projects/view.html")
+	t, err := prepareAppTemplate("templates/projects/view.html")
 	if err != nil {
 		return err
 	}
@@ -142,10 +136,7 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	case "GET":
 		log.Printf("method: GET\n")
-		t, err := template.ParseFiles(
-			"templates/main.html",
-			"templates/header.html",
-			"templates/projects/new.html")
+		t, err := prepareAppTemplate("templates/projects/new.html")
 		if err != nil {
 			return err
 		}
@@ -163,10 +154,7 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 
 func projectsHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called projectsHandler")
-	t, err := template.ParseFiles(
-		"templates/main.html",
-		"templates/header.html",
-		"templates/projects/list.html")
+	t, err := prepareAppTemplate("templates/projects/list.html")
 	if err != nil {
 		return err
 	}
@@ -181,10 +169,7 @@ func projectsHandler(w http.ResponseWriter, r *http.Request) error {
 
 func mainHandler(w http.ResponseWriter, r *http.Request) error {
 	log.Printf("Called mainHandler")
-	t, err := template.ParseFiles(
-		"templates/main.html",
-		"templates/header.html",
-		"templates/index.html")
+	t, err := prepareAppTemplate("templates/index.html")
 	if err != nil {
 		return err
 	}
@@ -194,4 +179,11 @@ func mainHandler(w http.ResponseWriter, r *http.Request) error {
 			PageName: "Main Page",
 		},
 	})
+}
+
+func prepareAppTemplate(contentTemplate string) (*template.Template, error) {
+	return template.ParseFiles(
+		"templates/main.html",
+		"templates/header.html",
+		contentTemplate)
 }
