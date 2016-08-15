@@ -117,7 +117,6 @@ func deleteProjectHandler(w http.ResponseWriter, r *http.Request) error {
 func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
 	case "POST":
-		log.Printf("method: POST\n")
 		err := r.ParseForm()
 		if err != nil {
 			return err
@@ -131,7 +130,6 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 		http.Redirect(w, r, "/projects", http.StatusFound)
 		return nil
 	case "GET":
-		log.Printf("method: GET\n")
 		t, err := prepareAppTemplate("templates/projects/new.html")
 		if err != nil {
 			return err
@@ -143,7 +141,6 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 			},
 		})
 	default:
-		log.Printf("DEFAULT\n")
 		return errors.New("method not supported, " + r.Method)
 	}
 }
