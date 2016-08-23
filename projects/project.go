@@ -41,21 +41,22 @@ import (
 	"time"
 )
 
+// PrjDir is the directory where the projects are saved in.
 var PrjDir string
 
-var prjIndexName string = "projects.json"
+var prjIndexName = "projects.json"
 
-type ByCreationDate []Project
+type byCreationDate []Project
 
-func (p ByCreationDate) Len() int {
+func (p byCreationDate) Len() int {
 	return len(p)
 }
 
-func (p ByCreationDate) Swap(i, j int) {
+func (p byCreationDate) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
-func (p ByCreationDate) Less(i, j int) bool {
+func (p byCreationDate) Less(i, j int) bool {
 	return p[i].CreationDate.Before(p[j].CreationDate)
 }
 
@@ -100,7 +101,7 @@ func persist(p Project) error {
 
 func deserialize() ([]Project, error) {
 	r, err := os.Open(filepath.Join(PrjDir, prjIndexName))
-	data := make([]Project, 0)
+	var data []Project
 	if err != nil {
 		if os.IsNotExist(err) {
 			return data, nil
@@ -159,7 +160,7 @@ func All() []Project {
 	if err != nil {
 		ps = make([]Project, 0)
 	} else {
-		sort.Sort(ByCreationDate(ps))
+		sort.Sort(byCreationDate(ps))
 	}
 	return ps
 }
