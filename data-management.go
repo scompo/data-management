@@ -38,6 +38,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 )
 
 const appName = "data-management"
@@ -47,13 +48,35 @@ type WebPage struct {
 	PageName string
 }
 
-var port = flag.String("port", "8080", "server port")
-
 func main() {
+
+	conf := utils.CreateConfig("port", "prj-dir")
+
+	conf["port"] = flag.String("port", "8080", "server port")
+	conf["prj-dir"] = flag.String("prj-dir", "data/projects", "project directory path")
 
 	flag.Parse()
 
-	log.Printf("Initializing %v...\n", appName)
+	err := initialize(conf)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func initialize(conf utils.Config) error {
+
+	log.Printf("Initializing...\n")
+
+	for k, v := range conf {
+		log.Printf("%v: %v\n", k, *v)
+	}
+
+	err := os.MkdirAll(*conf["prj-dir"], 0775)
+	if err != nil {
+		return err
+	}
+
+	projects.PrjDir = *conf["prj-dir"]
 
 	fs := http.FileServer(http.Dir("static"))
 
@@ -65,11 +88,13 @@ func main() {
 	http.Handle("/projects/view", utils.AppHandler(viewProjectHandler))
 	http.Handle("/pages/new", utils.AppHandler(pageNewHandler))
 
-	log.Printf("listening on port %v...", *port)
-	err := http.ListenAndServe(":"+*port, nil)
+	err = http.ListenAndServe(":"+*conf["port"], nil)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
+
+	log.Printf("done\n")
+	return nil
 }
 
 func pageNewHandler(w http.ResponseWriter, r *http.Request) error {
@@ -123,10 +148,13 @@ func newProjectHandler(w http.ResponseWriter, r *http.Request) error {
 		}
 		name := r.FormValue("Name")
 		description := r.FormValue("Description")
-		projects.Save(projects.Project{
+		err = projects.Save(projects.Project{
 			Name:        name,
 			Description: description,
 		})
+		if err != nil {
+			return err
+		}
 		http.Redirect(w, r, "/projects", http.StatusFound)
 		return nil
 	case "GET":

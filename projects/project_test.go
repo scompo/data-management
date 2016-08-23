@@ -31,62 +31,178 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package projects
 
 import (
-	"bytes"
-	"encoding/json"
-	"github.com/stretchr/testify/require"
+	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 )
 
-var testTime = time.Now()
-
-func TestEncode(t *testing.T) {
-	require := require.New(t)
+func setup(t *testing.T) {
+	projectDirectory, err := ioutil.TempDir("", "projects")
+	if err != nil {
+		t.Errorf("error setting test directory")
+	}
+	PrjDir = projectDirectory
+	//t.Logf("set test directory: %v", PrjDir)
 	currentTime = func() time.Time {
 		return testTime
 	}
-	testData := []struct {
-		value    Project
-		expected Project
-	}{
-		{
-			Project{
-				Name:         "testName",
-				Description:  "test description",
-				CreationDate: testTime,
-			},
-			Project{
-				Name:         "testName",
-				Description:  "test description",
-				CreationDate: testTime,
-			},
-		},
-	}
-	for _, test := range testData {
-		var buf bytes.Buffer
-		encode(&buf, test.value)
-		expData, err := json.Marshal(test.expected)
-		if err != nil {
-			t.Errorf("%v", err)
-		}
-		require.Equal(string(expData[:])+"\n", buf.String())
+}
+
+func teardown(t *testing.T) {
+	//t.Logf("deleting test directory: %v", PrjDir)
+	err := os.RemoveAll(PrjDir)
+	if err != nil {
+		t.Errorf("error deleting test directory")
 	}
 	currentTime = time.Now
 }
 
+var testTime = time.Now()
+
 func TestExists(t *testing.T) {
+
+	setup(t)
+
 	p := Project{
-		Name:         "testName",
-		Description:  "test description",
-		CreationDate: testTime,
+		Name:        "testName",
+		Description: "test description",
 	}
 	Save(p)
 	res := Exists(p.Name)
 	if !res {
-		t.Errorf("should return %v but returned %v\n", true, res)
+		t.Errorf("should exist!")
 	}
 	res = Exists("not existent")
 	if res {
-		t.Errorf("should return %v but returned %v\n", false, res)
+		t.Errorf("should not exist!")
 	}
+
+	teardown(t)
+
+}
+
+func TestDelete(t *testing.T) {
+
+	setup(t)
+
+	p := Project{
+		Name:        "testName",
+		Description: "test description",
+	}
+	err := Save(p)
+	if err != nil {
+		t.Errorf("Error saving: %v\n", err)
+	}
+	res := Exists(p.Name)
+	if !res {
+		t.Errorf("not saved!")
+	}
+	err = Delete(p.Name)
+	if err != nil {
+		t.Errorf("Error deleting: %v\n", err)
+	}
+	res = Exists(p.Name)
+	if res {
+		t.Errorf("not deleted!")
+	}
+	res = Exists(p.Name)
+	if res {
+		t.Errorf("should not error if project not existent!")
+	}
+	teardown(t)
+}
+
+func TestGet(t *testing.T) {
+
+	setup(t)
+
+	p := Project{
+		Name:        "testName",
+		Description: "test description",
+	}
+	err := Save(p)
+	if err != nil {
+		t.Errorf("Error saving: %v\n", err)
+	}
+	pSaved, err := Get(p.Name)
+	if err != nil {
+		t.Errorf("Error getting: %v\n", err)
+	}
+	if p.Name != pSaved.Name {
+		t.Errorf("Expected name \"%v\" but was \"%v\"", p.Name, pSaved.Name)
+	}
+	if p.Description != pSaved.Description {
+		t.Errorf("Expected description \"%v\", but was \"%v\"", p.Description, pSaved.Description)
+	}
+
+	teardown(t)
+}
+
+func TestSave(t *testing.T) {
+
+	setup(t)
+
+	p := Project{
+		Name:        "testName",
+		Description: "test description",
+	}
+	err := Save(p)
+	if err != nil {
+		t.Errorf("Error saving: %v\n", err)
+	}
+	pSaved, err := Get(p.Name)
+	if err != nil {
+		t.Errorf("Error getting: %v\n", err)
+	}
+	if p.Name != pSaved.Name {
+		t.Errorf("Expected name \"%v\" but was \"%v\"", p.Name, pSaved.Name)
+	}
+	if p.Description != pSaved.Description {
+		t.Errorf("Expected description \"%v\", but was \"%v\"", p.Description, pSaved.Description)
+	}
+	if testTime != pSaved.CreationDate {
+		t.Errorf("Date should be updated to \"%v\", but was \"%v\"", testTime, pSaved.CreationDate)
+	}
+	err = Save(p)
+	if err == nil {
+		t.Errorf("no error for project name already existent\n")
+	}
+	teardown(t)
+}
+
+func TestAll(t *testing.T) {
+
+	setup(t)
+
+	res := All()
+	if len(res) != 0 {
+		t.Errorf("Nothing should be saved, but found %v projects", len(res))
+	}
+	p := Project{
+		Name:        "testName",
+		Description: "test description",
+	}
+	p2 := Project{
+		Name:        "testName2",
+		Description: "test description2",
+	}
+	err := Save(p)
+	if err != nil {
+		t.Errorf("Error saving: %v\n", err)
+	}
+	err = Save(p2)
+	if err != nil {
+		t.Errorf("Error saving: %v\n", err)
+	}
+	res = All()
+	if len(res) != 2 {
+		t.Errorf("Saved 2 projects, but found %v", len(res))
+	} else {
+		if p.Name != res[0].Name || p2.Name != res[1].Name {
+			t.Errorf("not in order")
+		}
+	}
+
+	teardown(t)
 }

@@ -44,3 +44,13 @@ func (fn AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+type Config map[string]*string
+
+func CreateConfig(keys ...string) Config {
+	cfg := make(map[string]*string)
+	for _, key := range keys {
+		cfg[key] = nil
+	}
+	return cfg
+}

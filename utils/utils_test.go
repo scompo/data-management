@@ -65,3 +65,21 @@ func TestServeHTTP(t *testing.T) {
 		t.Errorf("returned something else in the body: \"%v\"\n", b)
 	}
 }
+
+func TestCreateConfig(t *testing.T) {
+	res := CreateConfig("a", "b")
+	first, err := res["a"]
+	if err != true {
+		t.Errorf("not present: %v\n", "a")
+	}
+	if first != nil {
+		t.Errorf("initialized? : %v\n", first)
+	}
+	second, err := res["b"]
+	if err != true {
+		t.Errorf("not present: %v\n", "b")
+	}
+	if second != nil {
+		t.Errorf("initialized? : %v\n", second)
+	}
+}

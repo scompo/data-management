@@ -35,11 +35,15 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"os"
+	"path/filepath"
 	"sort"
 	"time"
 )
 
-var prjs map[string]Project = make(map[string]Project)
+var PrjDir string
+
+var prjIndexName string = "projects.json"
 
 type ByCreationDate []Project
 
@@ -73,45 +77,114 @@ func encode(w io.Writer, p Project) error {
 // Save saves a Project.
 // Returns an error if something has gone wrong.
 func Save(p Project) error {
+	if Exists(p.Name) {
+		return errors.New("project name already existent: " + p.Name)
+	}
+	err := createProjectDir(p.Name)
+	if err != nil {
+		return err
+	}
 	p.CreationDate = currentTime()
-	prjs[p.Name] = p
+	persist(p)
 	return nil
 }
 
-// Delete deletes a project by name.
-// Returns an error if the project has not been found.
-func Delete(name string) error {
-	if !Exists(name) {
-		return errors.New("not found: " + name)
+func persist(p Project) error {
+	projects, err := deserialize()
+	if err != nil {
+		return err
 	}
-	delete(prjs, name)
+	projects = append(projects, p)
+	return serialize(projects)
+}
+
+func deserialize() ([]Project, error) {
+	r, err := os.Open(filepath.Join(PrjDir, prjIndexName))
+	data := make([]Project, 0)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return data, nil
+		}
+		return nil, err
+	}
+	dec := json.NewDecoder(r)
+	err = dec.Decode(&data)
+	return data, err
+}
+
+func serialize(prjs []Project) error {
+	w, err := os.Create(filepath.Join(PrjDir, prjIndexName))
+	if err != nil {
+		return err
+	}
+	enc := json.NewEncoder(w)
+	return enc.Encode(prjs)
+}
+
+func createProjectDir(name string) error {
+	return os.MkdirAll(filepath.Join(PrjDir, name), 0775)
+}
+
+func deleteProjectDir(name string) error {
+	return os.RemoveAll(filepath.Join(PrjDir, name))
+}
+
+// Delete deletes a project by name.
+func Delete(name string) error {
+	if Exists(name) {
+		ps, err := deserialize()
+		if err != nil {
+			return err
+		}
+		ind := -1
+		for i, v := range ps {
+			if v.Name == name {
+				ind = i
+				break
+			}
+		}
+		ps = append(ps[:ind], ps[ind+1:]...)
+		err = serialize(ps)
+		if err != nil {
+			return err
+		}
+		return deleteProjectDir(name)
+	}
 	return nil
 }
 
 // All returns all the projects sorted by creation date.
 func All() []Project {
-	ps := make([]Project, len(prjs), len(prjs))
-	i := 0
-	for _, v := range prjs {
-		ps[i] = v
-		i++
+	ps, err := deserialize()
+	if err != nil {
+		ps = make([]Project, 0)
+	} else {
+		sort.Sort(ByCreationDate(ps))
 	}
-	sort.Sort(ByCreationDate(ps))
 	return ps
 }
 
 // Get returns a project by name.
-// returns an error if the project has not been found.
 func Get(name string) (Project, error) {
 	if !Exists(name) {
-		return Project{}, errors.New("not found: " + name)
+		return Project{}, errors.New("not present")
 	}
-	v, _ := prjs[name]
-	return v, nil
+	prjs := All()
+	for _, prj := range prjs {
+		if prj.Name == name {
+			return prj, nil
+		}
+	}
+	return Project{}, errors.New("should not get here")
 }
 
 // Exists checks if a project exists.
 func Exists(name string) bool {
-	_, present := prjs[name]
-	return present
+	prjs := All()
+	for _, prj := range prjs {
+		if prj.Name == name {
+			return true
+		}
+	}
+	return false
 }
