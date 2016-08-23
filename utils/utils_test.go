@@ -39,12 +39,17 @@ import (
 )
 
 // http handler that always fails.
-func failFunction(w http.ResponseWriter, r *http.Request) error {
+func failHandler(w http.ResponseWriter, r *http.Request) error {
+	return failFunction()
+}
+
+// a function that always returns an error.
+func failFunction() error {
 	return errors.New("fail")
 }
 
 func TestFailFunction(t *testing.T) {
-	err := failFunction(nil, nil)
+	err := failFunction()
 	if err == nil {
 		t.Errorf("should return an error\n")
 	}
@@ -52,7 +57,7 @@ func TestFailFunction(t *testing.T) {
 
 func TestServeHTTP(t *testing.T) {
 	w := httptest.NewRecorder()
-	AppHandler(failFunction).ServeHTTP(w, nil)
+	AppHandler(failHandler).ServeHTTP(w, nil)
 	if w.Code != http.StatusInternalServerError {
 		t.Errorf("should return %v but returned %v\n", http.StatusInternalServerError, w.Code)
 	}
