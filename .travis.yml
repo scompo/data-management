@@ -9,5 +9,6 @@ before_install:
   - go get github.com/go-playground/overalls
 
 script:
+  - go test -v ./...
   - $GOPATH/bin/overalls -project=github.com/scompo/data-management -ignore=[.git,static,templates]
   - $GOPATH/bin/goveralls -coverprofile=overalls.coverprofile -service=travis-ci
