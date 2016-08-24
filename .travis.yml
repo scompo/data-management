@@ -3,5 +3,9 @@ language: go
 go:
   - tip
 
+before_install:
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
+  
 script:
-  - go test -v ./...
+  - $GOPATH/bin/goveralls -service=travis-ci
