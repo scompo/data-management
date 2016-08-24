@@ -13,3 +13,9 @@ The documentation for this project can be found on [godoc.org](https://godoc.org
 The current status of the master branch can be found on [travis-ci.org](https://travis-ci.org) clicking on the link below.
 
 [![Build Status](https://travis-ci.org/scompo/data-management.svg?branch=master)](https://travis-ci.org/scompo/data-management)
+
+## test coverage
+
+Test coverage reports are available on [coveralls.io](https://coveralls.io) clicking on the link below.
+
+[![Coverage Status](https://coveralls.io/repos/github/scompo/data-management/badge.svg?branch=master)](https://coveralls.io/github/scompo/data-management?branch=master)
