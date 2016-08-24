@@ -69,12 +69,6 @@ type Project struct {
 
 var currentTime = time.Now
 
-// Encodes the project to json
-func encode(w io.Writer, p Project) error {
-	enc := json.NewEncoder(w)
-	return enc.Encode(p)
-}
-
 // Save saves a Project.
 // Returns an error if something has gone wrong.
 func Save(p Project) error {
