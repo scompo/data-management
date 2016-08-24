@@ -161,7 +161,7 @@ func TestSave(t *testing.T) {
 	if p.Description != pSaved.Description {
 		t.Errorf("Expected description \"%v\", but was \"%v\"", p.Description, pSaved.Description)
 	}
-	if testTime != pSaved.CreationDate {
+	if !testTime.Equal(pSaved.CreationDate) {
 		t.Errorf("Date should be updated to \"%v\", but was \"%v\"", testTime, pSaved.CreationDate)
 	}
 	err = Save(p)
