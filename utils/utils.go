@@ -45,8 +45,11 @@ func (fn AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Config is a map of string to pointers of string used to save configurations
+// I need to add a validate method to make sure everything is fine.
 type Config map[string]*string
 
+// CreateConfig returns a new Config with keys ready for use.
 func CreateConfig(keys ...string) Config {
 	cfg := make(map[string]*string)
 	for _, key := range keys {
