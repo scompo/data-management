@@ -34,7 +34,6 @@ package projects
 import (
 	"encoding/json"
 	"errors"
-	"io"
 	"os"
 	"path/filepath"
 	"sort"

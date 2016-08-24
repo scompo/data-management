@@ -135,6 +135,10 @@ func TestGet(t *testing.T) {
 	if p.Description != pSaved.Description {
 		t.Errorf("Expected description \"%v\", but was \"%v\"", p.Description, pSaved.Description)
 	}
+	_, err = Get("not existent")
+	if err == nil {
+		t.Errorf("Expected error for name not existent\n")
+	}
 
 	teardown(t)
 }
