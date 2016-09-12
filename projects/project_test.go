@@ -33,6 +33,7 @@ package projects
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 )
@@ -43,14 +44,12 @@ func setup(t *testing.T) {
 		t.Errorf("error setting test directory")
 	}
 	PrjDir = projectDirectory
-	//t.Logf("set test directory: %v", PrjDir)
 	currentTime = func() time.Time {
 		return testTime
 	}
 }
 
 func teardown(t *testing.T) {
-	//t.Logf("deleting test directory: %v", PrjDir)
 	err := os.RemoveAll(PrjDir)
 	if err != nil {
 		t.Errorf("error deleting test directory")
@@ -59,6 +58,22 @@ func teardown(t *testing.T) {
 }
 
 var testTime = time.Now()
+
+func TestGetProjectPath(t *testing.T) {
+	baseDir := "/temp"
+	testDirName := "test"
+
+	PrjDir = baseDir
+
+	expected := filepath.Join(baseDir, testDirName)
+
+	res := GetProjectPath(testDirName)
+	
+	if res != expected {
+		t.Errorf("Expected \"%v\", but was \"%v\"", expected, res)
+	}
+	PrjDir = ""
+}
 
 func TestExists(t *testing.T) {
 

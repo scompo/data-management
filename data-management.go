@@ -71,12 +71,12 @@ func initialize(conf utils.Config) error {
 		log.Printf("%v: %v\n", k, *v)
 	}
 
-	err := os.MkdirAll(*conf["prj-dir"], 0775)
+	projects.PrjDir = *conf["prj-dir"]
+	
+	err := os.MkdirAll(projects.PrjDir, 0775)
 	if err != nil {
 		return err
 	}
-
-	projects.PrjDir = *conf["prj-dir"]
 
 	fs := http.FileServer(http.Dir("static"))
 

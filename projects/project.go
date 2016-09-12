@@ -115,12 +115,17 @@ func serialize(prjs []Project) error {
 	return enc.Encode(prjs)
 }
 
+// GetProjectPath returns the base path for a project.
+func GetProjectPath(name string) string {
+	return filepath.Join(PrjDir, name)
+}
+
 func createProjectDir(name string) error {
-	return os.MkdirAll(filepath.Join(PrjDir, name), 0775)
+	return os.MkdirAll(GetProjectPath(name), 0775)
 }
 
 func deleteProjectDir(name string) error {
-	return os.RemoveAll(filepath.Join(PrjDir, name))
+	return os.RemoveAll(GetProjectPath(name))
 }
 
 // Delete deletes a project by name.
